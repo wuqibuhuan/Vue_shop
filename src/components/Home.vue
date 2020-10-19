@@ -14,7 +14,7 @@
       <el-aside :width="isCollapse? '64px': '200px'">
         <div class="toggle-button" @click="tooggleCollapse">|||</div>
         <el-menu background-color="rgb(70, 68, 68)" text-color="#fff" active-text-color="#409eff" unique-opened
-          :collapse="isCollapse" :collapse-transition="false">
+          :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
           <!-- 一级菜单 -->
           <el-submenu :index="item.id +''" v-for="item in menulist" :key="item.id">
             <template slot="title">
@@ -24,7 +24,8 @@
               <span>{{item.authName}}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index="subitem.id + ''" v-for="subitem in item.children" :key="subitem.id">
+            <el-menu-item :index="'/' + subitem.path " v-for="subitem in item.children" :key="subitem.id"
+              @click="savaHunkge('/' + subitem.path)">
               <template slot="title">
                 <!-- 图标 -->
                 <i class="el-icon-menu"></i>
@@ -59,10 +60,13 @@ export default {
       },
       // 是否折叠
       isCollapse: false,
+      // 被激活的链接状态
+      activePath: ''
     }
   },
   created () {
     this.getMenuList();
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   methods: {
     loginout () {
@@ -86,6 +90,12 @@ export default {
     // 点击按钮 缩侧边栏事件
     tooggleCollapse () {
       this.isCollapse = !this.isCollapse
+    },
+    // 保存链接的激活状态
+    savaHunkge (activePath) {
+      console.log(activePath)
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   },
 };
