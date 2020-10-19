@@ -1,0 +1,23 @@
+{
+  "id": "2045968",
+  "name": "vue",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "10611841",
+      "name": "登录-密码",
+      "font_class": "denglu-mima",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "10617577",
+      "name": "登录-用户",
+      "font_class": "denglu-yonghu",
+      "unicode": "e669",
+      "unicode_decimal": 58985
+    }
+  ]
+}
