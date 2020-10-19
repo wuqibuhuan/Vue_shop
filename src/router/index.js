@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/login.vue'
 import Home from '../components/Home.vue'
-
+import Welcome from '../components/welcome.vue'
 Vue.use(VueRouter)
 
 const routes = [{
@@ -15,7 +15,12 @@ const routes = [{
   },
   {
     path: '/home',
-    component: Home
+    component: Home,
+    redirect: '/welcome',
+    children: [{
+      path: '/welcome',
+      component: Welcome
+    }]
   }
 ]
 
@@ -24,7 +29,7 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-// 路由导航守卫
+// 挂载路由导航守卫
 router.beforeEach((to, from, next) => {
   if (to.path === '/login') return next()
   const tokenSkr = window.sessionStorage.getItem('token')

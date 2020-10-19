@@ -3,7 +3,7 @@
     <!-- 头部区域 -->
     <el-header>
       <div>
-        <!-- <img src="../assets/logo.png" alt=""> -->
+        <img src="../assets/logo.png" alt="">
         <span>电商管理系统</span>
       </div>
       <el-button type="info" @click="loginout">退出</el-button>
@@ -11,31 +11,25 @@
     <!-- 页面主体区域 -->
     <el-container>
       <!-- 侧边栏区域 -->
-      <el-aside width="200px">
-        <el-menu background-color="rgb(70, 68, 68)" text-color="#fff" active-text-color="#ffd04b">
+      <el-aside :width="isCollapse? '64px': '200px'">
+        <div class="toggle-button" @click="tooggleCollapse">|||</div>
+        <el-menu background-color="rgb(70, 68, 68)" text-color="#fff" active-text-color="#409eff" unique-opened
+          :collapse="isCollapse" :collapse-transition="false">
           <!-- 一级菜单 -->
-          <el-submenu index="1">
+          <el-submenu :index="item.id +''" v-for="item in menulist" :key="item.id">
             <template slot="title">
               <!-- 图标 -->
-              <i class="el-icon-location"></i>
+              <i :class="iconObj[item.id]"></i>
               <!-- 文本 -->
-              <span>我是一级菜单</span>
+              <span>{{item.authName}}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item index="1-4-1">
+            <el-menu-item :index="subitem.id + ''" v-for="subitem in item.children" :key="subitem.id">
               <template slot="title">
                 <!-- 图标 -->
-                <i class="el-icon-location"></i>
+                <i class="el-icon-menu"></i>
                 <!-- 文本 -->
-                <span>我是二级菜单</span>
-              </template>
-            </el-menu-item>
-            <el-menu-item index="1-4-1">
-              <template slot="title">
-                <!-- 图标 -->
-                <i class="el-icon-location"></i>
-                <!-- 文本 -->
-                <span>我也是二级菜单</span>
+                <span>{{subitem.authName}}</span>
               </template>
             </el-menu-item>
 
@@ -44,18 +38,55 @@
         </el-menu>
       </el-aside>
       <!-- 右侧内容 -->
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
 export default {
+  data () {
+    return {
+      menulist: [],
+      iconObj: {
+        '125': 'iconfont icon-shengdanjie-lazhu',
+        '103': 'iconfont icon-shengdanjie-lingdang',
+        '101': 'iconfont icon-shengdanjie-shengdanwa',
+        '102': 'iconfont icon-shengdanjie-xueqiao',
+        '145': 'iconfont icon-shengdanjie-shoutao',
+      },
+      // 是否折叠
+      isCollapse: false,
+    }
+  },
+  created () {
+    this.getMenuList();
+  },
   methods: {
     loginout () {
       window.sessionStorage.clear();
       this.$router.push("/login");
     },
+    // 获取所有菜单
+    async getMenuList () {
+      const { data } = await this.$http.get("menus");
+      console.log(data)
+      if (data.meta.status === 200) {
+        this.menulist = data.data;
+      } else {
+        this.$message({
+          type: "error",
+          message: data.meta.msg
+        });
+      }
+
+    },
+    // 点击按钮 缩侧边栏事件
+    tooggleCollapse () {
+      this.isCollapse = !this.isCollapse
+    }
   },
 };
 </script>
@@ -71,12 +102,18 @@ export default {
   padding-left: 0;
   align-items: center;
   color: aliceblue;
-  span {
-    font-size: 20px;
-    margin-left: 15px;
+  > div {
+    display: flex;
+    align-items: center;
+    span {
+      margin-left: 15px;
+    }
+  }
+  img {
+    width: 50px;
+    height: 50px;
   }
 }
-
 .el-aside {
   background-color: rgb(70, 68, 68);
   .el-menu {
@@ -85,6 +122,18 @@ export default {
 }
 
 .el-main {
-  background-color: blueviolet;
+  background-color: rgb(234, 231, 236);
+}
+.iconfont {
+  margin-right: 10px;
+}
+.toggle-button {
+  background-color: rgb(75, 76, 77);
+  font-size: 10px;
+  line-height: 24px;
+  color: aliceblue;
+  text-align: center;
+  letter-spacing: 0.2em;
+  cursor: pointer;
 }
 </style>
