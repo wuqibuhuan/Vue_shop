@@ -7,7 +7,6 @@ import './plugins/element.js'
 import './assets/css/globol.css'
 // 导入字体图标
 import './assets/font/iconfont.css'
-
 import '../fonts/iconfont.css'
 import axios from 'axios'
 
@@ -27,7 +26,7 @@ axios.interceptors.request.use(config => {
 
 Vue.prototype.$http = axios
 
-// 请求头拦截
+
 
 Vue.config.productionTip = false
 

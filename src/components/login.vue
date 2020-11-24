@@ -66,7 +66,7 @@ export default {
               type: 'success'
             })
             window.sessionStorage.setItem('token', res.data.token)
-            this.$router.push('/home')
+            this.$router.push('/home') 
           } else {
             this.$message({
               message: res.meta.msg,
