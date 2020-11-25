@@ -89,6 +89,24 @@
       </span>
     </el-dialog>
 
+    <!-- 编辑角色 -->
+    <el-dialog title="编辑角色" :visible.sync="editRoleVisible" width="50%" @close="editRoleDiaolog">
+      <!-- 内容区域 -->
+      <el-form :model="editRoleForm" :rules="editRoles" ref="editroleForm" label-width="100px" hide-required-asterisk>
+        <el-form-item label="角色名称:" prop="roleName">
+          <el-input v-model="editRoleForm.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述:" prop="roleDesc" hide-required-asterisk>
+          <el-input v-model="editRoleForm.roleDesc"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 按钮区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editRoleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editUser">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 
 </template>
@@ -131,6 +149,10 @@ export default {
         ],
 
       },
+      // 编辑角色对话框显示与隐藏
+      editRoleVisible: false,
+      // 编辑角色表单
+      editRoleForm: {},
     }
   },
   created () {
@@ -151,6 +173,8 @@ export default {
     addRoleDiaolog () {
       this.$refs.roleForm.resetFields()
     },
+
+    // 添加用户
     addUser () {
       this.$refs.roleForm.validate(async valid => {
         if (!valid) return;
@@ -189,6 +213,43 @@ export default {
           });
         });
     },
+    // 删除角色权限
+    async deleteRight (role, rightId) {
+      // 弹出确认框
+      const delRightConfirm = await this.$confirm(
+        '此操作将删除此权限, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch(err => err);
+      // console.log(delRightConfirm);
+      if (delRightConfirm !== 'confirm') return null;
+
+      // 发起删除权限请求
+      // console.log(role, rightId);
+      const { data: res } = await this.$http.delete(
+        `roles/${role.id}/rights/${rightId}`
+      );
+      if (res.meta.status !== 200) {
+        return this.$message.error(res.meta.status + ' : 权限删除失败！');
+      }
+      // 重新赋值权限层列表
+      role.children = res.data;
+      // 返回成功提示
+      return this.$message.success(res.meta.msg);
+    },
+    // 编辑角色
+    async showEditDialog (id) {
+      const { data: res } = await this.$http.get('roles/' + id);
+      if (res.meta.status !== 200) {
+        return this.$message.error(res.meta.status + ' : 获取角色信息失败');
+      }
+      this.editRoleForm = res.data;
+      this.editRoleVisible = true
+    }
   },
 
 }
